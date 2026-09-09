@@ -1,0 +1,21 @@
+# TLS Ingress (cert-manager issues the certificate automatically).
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kardamom
+  namespace: kardamom
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts: [kardamom.local]
+      secretName: kardamom-tls
+  rules:
+    - host: kardamom.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service: {name: kardamom, port: {number: 80}}

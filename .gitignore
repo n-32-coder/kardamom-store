@@ -1,0 +1,25 @@
+# Python / Django
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv*/
+venv/
+env/
+
+# Django
+db.sqlite3
+media/
+staticfiles/
+
+# Secrets — never commit real values
+.env
+
+# OS / editors
+.DS_Store
+.vscode/
+.idea/
+
+# Test / coverage
+.coverage
+htmlcov/
+.pytest_cache/

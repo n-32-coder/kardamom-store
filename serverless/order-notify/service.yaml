@@ -1,0 +1,23 @@
+# Knative Serving: event-driven serverless function (scales to zero when idle).
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: order-notify
+  namespace: kardamom
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/minScale: "0" # scale to zero
+        autoscaling.knative.dev/maxScale: "5"
+    spec:
+      containers:
+        - image: ghcr.io/STUDENT/order-notify:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: NOTIFY_FROM
+              value: "orders@kardamom.local"
+          resources:
+            requests: {cpu: 50m, memory: 64Mi}
+            limits: {cpu: 250m, memory: 128Mi}

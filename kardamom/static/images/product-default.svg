@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="30%" r="90%">
+      <stop offset="0%" stop-color="#2a2416"/>
+      <stop offset="60%" stop-color="#14110a"/>
+      <stop offset="100%" stop-color="#0d0b07"/>
+    </radialGradient>
+    <linearGradient id="pod" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#9dc98a"/>
+      <stop offset="50%" stop-color="#5d9a55"/>
+      <stop offset="100%" stop-color="#2f5c2c"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="url(#bg)"/>
+  <ellipse cx="200" cy="240" rx="90" ry="13" fill="#000" opacity="0.45"/>
+  <g transform="rotate(-14 200 160)">
+    <ellipse cx="200" cy="160" rx="44" ry="88" fill="url(#pod)"/>
+    <path d="M178 82 Q172 160 178 238 M200 74 Q196 160 200 246 M222 82 Q228 160 222 238" stroke="#24491f" stroke-width="4" fill="none" opacity="0.7"/>
+    <ellipse cx="188" cy="122" rx="10" ry="32" fill="#cfe8bd" opacity="0.5"/>
+  </g>
+  <text x="200" y="52" text-anchor="middle" font-family="Georgia,serif" font-size="34" letter-spacing="6" fill="#c99a4b">KARDAMOM</text>
+</svg>

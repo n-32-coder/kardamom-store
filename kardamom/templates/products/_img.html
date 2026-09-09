@@ -1,0 +1,15 @@
+{% load static %}
+{# Shared product artwork: uploaded photo, else category artwork. Usage: {% include "products/_img.html" with product=p cls="product-image" %} #}
+{% if product.image %}
+<img src="{{ product.image.url }}" alt="{{ product.name }}" class="{{ cls|default:'product-image' }}">
+{% elif product.category.slug == 'powder' %}
+<img src="{% static 'images/product-powder.svg' %}" alt="{{ product.name }}" class="{{ cls|default:'product-image' }}">
+{% elif product.category.slug == 'bold' %}
+<img src="{% static 'images/product-bold.svg' %}" alt="{{ product.name }}" class="{{ cls|default:'product-image' }}">
+{% elif product.category.slug == 'gifts' %}
+<img src="{% static 'images/product-gifts.svg' %}" alt="{{ product.name }}" class="{{ cls|default:'product-image' }}">
+{% elif product.category.slug == 'premium-green' %}
+<img src="{% static 'images/product-premium-green.svg' %}" alt="{{ product.name }}" class="{{ cls|default:'product-image' }}">
+{% else %}
+<img src="{% static 'images/product-default.svg' %}" alt="{{ product.name }}" class="{{ cls|default:'product-image' }}">
+{% endif %}

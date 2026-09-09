@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <defs>
+    <radialGradient id="bg" cx="65%" cy="25%" r="90%">
+      <stop offset="0%" stop-color="#2a2416"/>
+      <stop offset="60%" stop-color="#171310"/>
+      <stop offset="100%" stop-color="#0e0c09"/>
+    </radialGradient>
+    <linearGradient id="pod" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#9dc98a"/>
+      <stop offset="45%" stop-color="#5d9a55"/>
+      <stop offset="100%" stop-color="#2f5c2c"/>
+    </linearGradient>
+    <linearGradient id="pod2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#b7dd9f"/>
+      <stop offset="50%" stop-color="#6fae5f"/>
+      <stop offset="100%" stop-color="#38682f"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="url(#bg)"/>
+  <ellipse cx="200" cy="262" rx="130" ry="16" fill="#000" opacity="0.45"/>
+  <g transform="rotate(-18 200 170)">
+    <ellipse cx="200" cy="170" rx="42" ry="95" fill="url(#pod)"/>
+    <path d="M178 90 Q172 170 178 250 M200 82 Q196 170 200 258 M222 90 Q228 170 222 250" stroke="#24491f" stroke-width="4" fill="none" opacity="0.7"/>
+    <ellipse cx="188" cy="130" rx="10" ry="34" fill="#cfe8bd" opacity="0.5"/>
+  </g>
+  <g transform="rotate(14 140 190)">
+    <ellipse cx="140" cy="190" rx="34" ry="76" fill="url(#pod2)"/>
+    <path d="M122 122 Q117 190 122 258 M140 116 Q137 190 140 264 M158 122 Q163 190 158 258" stroke="#24491f" stroke-width="3.5" fill="none" opacity="0.7"/>
+    <ellipse cx="131" cy="158" rx="8" ry="26" fill="#d8efc4" opacity="0.5"/>
+  </g>
+  <g transform="rotate(24 268 195)">
+    <ellipse cx="268" cy="195" rx="30" ry="66" fill="url(#pod2)"/>
+    <path d="M252 136 Q248 195 252 254 M268 131 Q265 195 268 259 M284 136 Q288 195 284 254" stroke="#24491f" stroke-width="3" fill="none" opacity="0.7"/>
+  </g>
+  <circle cx="200" cy="70" r="46" fill="none" stroke="#c99a4b" stroke-width="2" opacity="0.5"/>
+  <text x="200" y="80" text-anchor="middle" font-family="Georgia,serif" font-size="30" fill="#c99a4b">8mm</text>
+</svg>

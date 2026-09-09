@@ -1,0 +1,11 @@
+# Persistent storage for uploaded product/profile images.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: kardamom-media
+  namespace: kardamom
+spec:
+  accessModes: [ReadWriteOnce]
+  resources:
+    requests:
+      storage: 2Gi

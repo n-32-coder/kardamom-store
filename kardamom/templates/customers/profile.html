@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Profile - KARDAMOM{% endblock %}
+
+{% block content %}
+<div class="section-title">My Account</div>
+<p><strong>Username:</strong> {{ customer.username }}</p>
+<p><strong>Email:</strong> {{ customer.email|default:"—" }}</p>
+<p><strong>Phone:</strong> {{ customer.phone|default:"—" }}</p>
+<p><strong>Member since:</strong> {{ customer.date_joined|date:"M d, Y" }}</p>
+<a href="{% url 'cart_detail' %}" class="btn-premium">View Cart</a>
+{% endblock %}

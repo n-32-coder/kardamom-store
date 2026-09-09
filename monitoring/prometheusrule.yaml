@@ -1,0 +1,26 @@
+# Alerting rules for kardamom (fired into Alertmanager / OpenShift Monitoring).
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: kardamom
+  namespace: kardamom
+  labels:
+    release: kube-prometheus-stack
+spec:
+  groups:
+    - name: kardamom.rules
+      rules:
+        - alert: KardamomPodsDown
+          expr: sum by (deployment) (kube_deployment_status_replicas_available{deployment="kardamom"}) < 2
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "KARDAMOM has fewer than 2 available replicas"
+        - alert: KardamomHighCPU
+          expr: sum(rate(container_cpu_usage_seconds_total{pod=~"kardamom-.*"}[5m])) > 1.5
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "KARDAMOM CPU usage is high (HPA should scale)"

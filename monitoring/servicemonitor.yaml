@@ -1,0 +1,16 @@
+# Prometheus Operator: scrape hints for the kardamom Service.
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: kardamom
+  namespace: kardamom
+  labels:
+    release: kube-prometheus-stack
+spec:
+  selector:
+    matchLabels:
+      app: kardamom
+  endpoints:
+    - port: http
+      path: /healthz/
+      interval: 30s

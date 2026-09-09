@@ -1,0 +1,21 @@
+# Horizontal Pod Autoscaler: scales 2–5 replicas on CPU (and memory) utilization.
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: kardamom
+  namespace: kardamom
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: kardamom
+  minReplicas: 2
+  maxReplicas: 5
+  metrics:
+    - type: Resource
+      resource: {name: cpu, target: {type: Utilization, averageUtilization: 60}}
+    - type: Resource
+      resource: {name: memory, target: {type: Utilization, averageUtilization: 70}}
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300

@@ -1,0 +1,10 @@
+**/*
+!requirements.txt
+!manage.py
+!config/**
+!customers/**
+!products/**
+!cart/**
+!orders/**
+!kardamom/templates/**
+!kardamom/static/**

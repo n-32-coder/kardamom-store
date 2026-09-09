@@ -1,0 +1,28 @@
+# NetworkPolicy: pods accept traffic only from the ingress controller; egress limited to DNS + HTTPS (payment APIs).
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: kardamom
+  namespace: kardamom
+spec:
+  podSelector:
+    matchLabels:
+      app: kardamom
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: ingress-nginx
+      ports:
+        - port: 8000
+  egress:
+    - to:
+        - namespaceSelector: {}
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - {port: 53, protocol: UDP}
+    - ports:
+        - {port: 443, protocol: TCP}

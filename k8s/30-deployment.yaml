@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kardamom
+  namespace: kardamom
+  labels:
+    app: kardamom
+spec:
+  replicas: 3 # High Availability: 3 replicas across nodes
+  strategy:
+    type: RollingUpdate # zero-downtime rolling updates
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: kardamom
+  template:
+    metadata:
+      labels:
+        app: kardamom
+    spec:
+      serviceAccountName: kardamom
+      affinity:
+        podAntiAffinity: # spread replicas across nodes
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app: kardamom
+                topologyKey: kubernetes.io/hostname
+      containers:
+        - name: web
+          image: ghcr.io/STUDENT/kardamom:latest # set your registry path
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+          env:
+            - name: DEBUG
+              value: "False"
+            - name: ALLOWED_HOSTS
+              value: "kardamom.local"
+            - name: SECRET_KEY
+              valueFrom: {secretKeyRef: {name: kardamom-secrets, key: SECRET_KEY}}
+            - name: RAZORPAY_KEY_ID
+              valueFrom: {secretKeyRef: {name: kardamom-secrets, key: RAZORPAY_KEY_ID}}
+            - name: RAZORPAY_KEY_SECRET
+              valueFrom: {secretKeyRef: {name: kardamom-secrets, key: RAZORPAY_KEY_SECRET}}
+            - name: STRIPE_PUBLIC_KEY
+              valueFrom: {secretKeyRef: {name: kardamom-secrets, key: STRIPE_PUBLIC_KEY}}
+            - name: STRIPE_SECRET_KEY
+              valueFrom: {secretKeyRef: {name: kardamom-secrets, key: STRIPE_SECRET_KEY}}
+          resources: # required for HPA CPU autoscaling
+            requests: {cpu: 200m, memory: 256Mi}
+            limits: {cpu: 1000m, memory: 512Mi}
+          startupProbe: # Startup probe: slow first boot (migrations)
+            httpGet: {path: /healthz/, port: 8000}
+            failureThreshold: 30
+            periodSeconds: 10
+          livenessProbe: # Liveness probe
+            httpGet: {path: /healthz/, port: 8000}
+            periodSeconds: 20
+            failureThreshold: 3
+          readinessProbe: # Readiness probe: pod joins Service only when ready
+            httpGet: {path: /healthz/, port: 8000}
+            periodSeconds: 10
+            failureThreshold: 3
+          volumeMounts:
+            - {name: media, mountPath: /app/media}
+      volumes:
+        - name: media
+          persistentVolumeClaim: {claimName: kardamom-media}

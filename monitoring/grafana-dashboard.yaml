@@ -1,0 +1,18 @@
+# Grafana dashboard (import JSON): CPU / memory / replica health of kardamom.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kardamom-dashboard
+  namespace: kardamom
+  labels:
+    grafana_dashboard: "1"
+data:
+  kardamom.json: |
+    {
+      "title": "KARDAMOM Store",
+      "panels": [
+        {"title": "Available replicas", "targets": [{"expr": "kube_deployment_status_replicas_available{deployment=\"kardamom\"}"}]},
+        {"title": "CPU usage", "targets": [{"expr": "sum(rate(container_cpu_usage_seconds_total{pod=~\"kardamom-.*\"}[5m]))"}]},
+        {"title": "Memory working set", "targets": [{"expr": "sum(container_memory_working_set_bytes{pod=~\"kardamom-.*\"})"}]}
+      ]
+    }

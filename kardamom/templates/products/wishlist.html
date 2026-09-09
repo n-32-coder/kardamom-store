@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Wishlist - KARDAMOM{% endblock %}
+
+{% block content %}
+<div class="section-title">My Wishlist</div>
+<div class="product-grid">
+    {% for item in items %}
+    <a href="{{ item.product.get_absolute_url }}" class="product-card">
+        {% include "products/_img.html" with product=item.product %}
+        <div class="product-info">
+            <div class="product-name">{{ item.product.name }}</div>
+            <div class="product-price">₹{{ item.product.price|floatformat:2 }}</div>
+            <div class="product-pack-size">{{ item.product.get_pack_size_display }}</div>
+        </div>
+    </a>
+    {% empty %}
+    <p class="text-muted">Wishlist is empty. Tap “Save to Wishlist” on any product.</p>
+    {% endfor %}
+</div>
+{% endblock %}

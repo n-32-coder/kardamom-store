@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <defs>
+    <radialGradient id="bg" cx="30%" cy="20%" r="95%">
+      <stop offset="0%" stop-color="#33200f"/>
+      <stop offset="60%" stop-color="#17100a"/>
+      <stop offset="100%" stop-color="#0d0a07"/>
+    </radialGradient>
+    <linearGradient id="bold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#c9a86a"/>
+      <stop offset="45%" stop-color="#8b5a2b"/>
+      <stop offset="100%" stop-color="#4a2c12"/>
+    </linearGradient>
+    <linearGradient id="bold2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#e0b566"/>
+      <stop offset="50%" stop-color="#a06a3a"/>
+      <stop offset="100%" stop-color="#5e3c1c"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="url(#bg)"/>
+  <ellipse cx="200" cy="262" rx="135" ry="16" fill="#000" opacity="0.45"/>
+  <g transform="rotate(-8 200 165)">
+    <ellipse cx="200" cy="165" rx="52" ry="100" fill="url(#bold)"/>
+    <path d="M172 75 Q165 165 172 255 M200 65 Q196 165 200 265 M228 75 Q235 165 228 255" stroke="#3a2210" stroke-width="5" fill="none" opacity="0.75"/>
+    <ellipse cx="186" cy="120" rx="12" ry="36" fill="#f0d9a8" opacity="0.55"/>
+  </g>
+  <g transform="rotate(20 120 200)">
+    <ellipse cx="120" cy="200" rx="36" ry="72" fill="url(#bold2)"/>
+    <path d="M101 136 Q96 200 101 264 M120 130 Q117 200 120 270 M139 136 Q144 200 139 264" stroke="#3a2210" stroke-width="3.5" fill="none" opacity="0.7"/>
+  </g>
+  <g transform="rotate(-22 288 200)">
+    <ellipse cx="288" cy="200" rx="34" ry="68" fill="url(#bold2)"/>
+    <path d="M270 140 Q266 200 270 260 M288 134 Q285 200 288 266 M306 140 Q310 200 306 260" stroke="#3a2210" stroke-width="3.5" fill="none" opacity="0.7"/>
+  </g>
+  <text x="200" y="42" text-anchor="middle" font-family="Georgia,serif" font-size="26" fill="#e0b566">EXTRA BOLD</text>
+</svg>

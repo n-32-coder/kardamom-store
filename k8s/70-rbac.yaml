@@ -1,0 +1,30 @@
+# RBAC: least-privilege ServiceAccount for the app pods.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kardamom
+  namespace: kardamom
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: kardamom
+  namespace: kardamom
+rules:
+  - apiGroups: [""]
+    resources: [configmaps]
+    verbs: [get, list]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: kardamom
+  namespace: kardamom
+subjects:
+  - kind: ServiceAccount
+    name: kardamom
+    namespace: kardamom
+roleRef:
+  kind: Role
+  apiGroup: rbac.authorization.k8s.io
+  name: kardamom

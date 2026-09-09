@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - KARDAMOM{% endblock %}
+
+{% block content %}
+<div class="section-title">Store Dashboard</div>
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card"><div class="card-body">
+            <h6>Total Revenue</h6>
+            <h3>₹{{ revenue|floatformat:2 }}</h3>
+        </div></div>
+    </div>
+    <div class="col-md-6">
+        <div class="card"><div class="card-body">
+            <h6>Total Orders</h6>
+            <h3>{{ order_count }}</h3>
+        </div></div>
+    </div>
+</div>
+
+<h6>Orders by Status</h6>
+{% for row in by_status %}
+<p><span class="status-{{ row.status }}">{{ row.status }}</span> — {{ row.count }} orders · ₹{{ row.revenue|floatformat:2 }}</p>
+{% empty %}
+<p class="text-muted">No orders yet.</p>
+{% endfor %}
+
+<h6 class="mt-4">Top Products</h6>
+{% for row in top_products %}
+<p>{{ row.product__name }} — {{ row.qty }} sold</p>
+{% empty %}
+<p class="text-muted">Nothing sold yet.</p>
+{% endfor %}
+
+<h6 class="mt-4">Low Stock Alert (&lt; 10)</h6>
+{% for p in low_stock %}
+<p>{{ p.name }} ({{ p.get_pack_size_display }}) — {{ p.stock }} left</p>
+{% empty %}
+<p class="text-muted">Stock levels healthy.</p>
+{% endfor %}
+{% endblock %}
