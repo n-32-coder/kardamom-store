@@ -16,12 +16,9 @@ admin, created = User.objects.get_or_create(
     username='admin',
     defaults={'email': 'admin@kardamom.store', 'is_staff': True, 'is_superuser': True},
 )
-if created:
-    admin.set_password('admin123')
-    admin.save()
-    print('created admin / admin123')
-else:
-    print('admin exists')
+admin.set_password(os.environ.get('KARDAMOM_ADMIN_PASSWORD', 'admin123'))
+admin.save()
+print('admin ready' if not created else 'created admin')
 
 cats = {}
 for name, slug, desc in [

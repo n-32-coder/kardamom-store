@@ -12,17 +12,21 @@ env:
 jobs:
   build-test:
     runs-on: ubuntu-latest
+    env:
+      KARDAMOM_ADMIN_PASSWORD: ci-admin-123
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.14"
+          python-version: "3.13"
       - name: Install deps
         run: pip install -r requirements.txt
       - name: Migrate
         run: python manage.py migrate --noinput
       - name: Django check
         run: python manage.py check
+      - name: Seed demo data
+        run: python seed_kardamom.py
       - name: Smoke tests
         run: |
           python verify_kardamom.py
