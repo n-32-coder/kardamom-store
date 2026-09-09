@@ -7,7 +7,7 @@
 {% elif product.category.slug == 'bold' %}
 <img src="{% static 'images/product-bold.svg' %}" alt="{{ product.name }}" class="{{ cls|default:'product-image' }}">
 {% elif product.category.slug == 'gifts' %}
-<img src="{% static 'images/product-gifts.svg' %}" alt="{{ product.name }}" class="{{ cls|default:'product-image' }}">
+<img src="{% static 'images/gift-pack.png' %}" alt="{{ product.name }}" class="{{ cls|default:'product-image' }}">
 {% elif product.category.slug == 'premium-green' %}
 <img src="{% static 'images/product-premium-green.svg' %}" alt="{{ product.name }}" class="{{ cls|default:'product-image' }}">
 {% else %}
