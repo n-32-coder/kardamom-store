@@ -157,43 +157,9 @@ def order_detail(request, order_id):
 
 @staff_member_required
 def dashboard(request):
-    from datetime import timedelta
-
-    from django.db.models.functions import TruncDate
-    from django.utils import timezone
-
-    if request.method == 'POST':
-        action = request.POST.get('action')
-        if action == 'status':
-            order = get_object_or_404(Order, id=request.POST.get('order_id'))
-            new_status = request.POST.get('status')
-            if new_status in dict(Order.STATUS_CHOICES):
-                order.status = new_status
-                order.save(update_fields=['status'])
-                messages.success(request, f'Order #{order.id} → {order.get_status_display()}.')
-        elif action == 'restock':
-            product = get_object_or_404(Product, id=request.POST.get('product_id'))
-            try:
-                qty = max(1, int(request.POST.get('qty', 0)))
-            except ValueError:
-                qty = 0
-            if qty:
-                product.stock += qty
-                product.save(update_fields=['stock'])
-                messages.success(request, f'{product.name} restocked +{qty}.')
-        return redirect('dashboard')
-
     stats = Order.objects.aggregate(revenue=Sum('total'), count=Count('id'))
     by_status = list(
         Order.objects.values('status').annotate(count=Count('id'), revenue=Sum('total'))
-    )
-    week_ago = timezone.now() - timedelta(days=6)
-    trend = list(
-        Order.objects.filter(created_at__gte=week_ago)
-        .annotate(day=TruncDate('created_at'))
-        .values('day')
-        .annotate(revenue=Sum('total'), count=Count('id'))
-        .order_by('day')
     )
     low_stock = list(Product.objects.filter(stock__lt=10).order_by('stock')[:10])
     top_products = list(
@@ -201,15 +167,10 @@ def dashboard(request):
         .annotate(qty=Sum('quantity'), revenue=Sum('price'))
         .order_by('-qty')[:5]
     )
-    recent_orders = list(Order.objects.select_related('customer')[:10])
     return render(request, 'orders/dashboard.html', {
         'revenue': stats['revenue'] or 0,
         'order_count': stats['count'] or 0,
         'by_status': by_status,
-        'trend': trend,
         'low_stock': low_stock,
-        'low_count': Product.objects.filter(stock__lt=10).count(),
         'top_products': top_products,
-        'recent_orders': recent_orders,
-        'status_choices': Order.STATUS_CHOICES,
     })
