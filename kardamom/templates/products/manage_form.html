@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}{% if product %}Edit {{ product.name }}{% else %}Add Product{% endif %} - KARDAMOM{% endblock %}
+
+{% block content %}
+<div class="section-title">{% if product %}Edit Product{% else %}Add Product{% endif %}</div>
+<form method="post" enctype="multipart/form-data" class="checkout-section" style="max-width:640px;">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn-premium">Save Product</button>
+    <a href="{% url 'product_manage_list' %}" class="btn-premium-secondary">Cancel</a>
+</form>
+{% endblock %}

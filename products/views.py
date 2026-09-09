@@ -1,3 +1,4 @@
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q
@@ -159,3 +160,46 @@ def healthz(request):
     from django.http import JsonResponse
 
     return JsonResponse({'status': 'ok', 'app': 'kardamom'})
+
+
+@staff_member_required
+def product_manage_list(request):
+    items = Product.objects.select_related('category').order_by('name')
+    return render(request, 'products/manage_list.html', {'items': items})
+
+
+@staff_member_required
+def product_manage_edit(request, pk=None):
+    from django.contrib import messages
+    from django.shortcuts import redirect
+    from django.utils.text import slugify
+
+    from .forms import ProductForm
+
+    product = get_object_or_404(Product, pk=pk) if pk else None
+    if request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES, instance=product)
+        if form.is_valid():
+            obj = form.save(commit=False)
+            if not obj.slug:
+                obj.slug = slugify(obj.name)
+            obj.save()
+            messages.success(request, f'{obj.name} saved.')
+            return redirect('product_manage_list')
+    else:
+        form = ProductForm(instance=product)
+    return render(request, 'products/manage_form.html', {'form': form, 'product': product})
+
+
+@staff_member_required
+def product_manage_delete(request, pk):
+    from django.contrib import messages
+    from django.shortcuts import redirect
+
+    product = get_object_or_404(Product, pk=pk)
+    if request.method == 'POST':
+        name = product.name
+        product.delete()
+        messages.success(request, f'{name} deleted.')
+        return redirect('product_manage_list')
+    return render(request, 'products/manage_confirm_delete.html', {'product': product})
