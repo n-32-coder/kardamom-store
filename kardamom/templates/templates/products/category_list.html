@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Categories - KARDAMOM{% endblock %}
+
+{% block content %}
+<div class="section-title">Manage Categories</div>
+<p class="section-sub">Shelves of the store — products hang under these.</p>
+<a href="{% url 'category_create' %}" class="btn-premium mb-3">+ Add Category</a>
+
+{% for cat in items %}
+<div class="cart-item">
+    <div class="cart-item-details">
+        <strong>{{ cat.name }}</strong>
+        <span class="text-muted">· /products/?category={{ cat.slug }}</span><br>
+        <span>{{ cat.description|default:"—"|truncatewords:12 }} · {{ cat.products.count }} product{{ cat.products.count|pluralize }}</span>
+        {% if not cat.is_active %}<span class="status-cancelled">Hidden</span>{% endif %}
+    </div>
+    <a href="{% url 'category_update' cat.id %}" class="btn-premium" style="padding:.45rem 1rem;">Edit</a>
+    <a href="{% url 'category_delete' cat.id %}" class="cart-item-remove">Delete</a>
+</div>
+{% empty %}
+<p class="text-muted">No categories yet.</p>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}{% if category %}Edit {{ category.name }}{% else %}Add Category{% endif %} - KARDAMOM{% endblock %}
+
+{% block content %}
+<div class="section-title">{% if category %}Edit Category{% else %}Add Category{% endif %}</div>
+<form method="post" class="checkout-section" style="max-width:560px;">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn-premium">Save Category</button>
+    <a href="{% url 'category_manage_list' %}" class="btn-premium-secondary">Cancel</a>
+</form>
+{% endblock %}

@@ -37,6 +37,8 @@ class Product(models.Model):
         ('1kg', '1 kg'),
     ]
     pack_size = models.CharField(max_length=10, choices=pack_size_choices, default='100g')
+    grade = models.CharField(max_length=50, blank=True, help_text='e.g. Alleppey Green, Bold 8mm')
+    size_mm = models.DecimalField(max_digits=5, decimal_places=1, null=True, blank=True, help_text='Size in mm, e.g. 8.0')
     category = models.ForeignKey(ProductCategory, on_delete=models.CASCADE, related_name='products')
     image = models.FileField(upload_to='products/', blank=True, null=True)
     is_active = models.BooleanField(default=True)

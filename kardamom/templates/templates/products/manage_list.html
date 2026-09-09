@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Products - KARDAMOM{% endblock %}
+
+{% block content %}
+<div class="section-title">Manage Products</div>
+<p class="section-sub">Add, edit, delete and control stock — changes go live instantly.</p>
+<a href="{% url 'product_create' %}" class="btn-premium mb-3">+ Add Product</a>
+
+{% for p in items %}
+<div class="cart-item">
+    {% include "products/_img.html" with product=p cls="cart-thumb" %}
+    <div class="cart-item-details">
+        <strong>{{ p.name }}</strong>
+        <span class="text-muted">· {{ p.get_pack_size_display }} · {{ p.category.name }}</span><br>
+        <span>₹{{ p.price|floatformat:2 }} · stock: <strong>{{ p.stock }}</strong></span>
+        {% if p.grade %}<span class="text-muted">· {{ p.grade }}</span>{% endif %}
+        {% if p.size_mm %}<span class="text-muted">· {{ p.size_mm }}mm</span>{% endif %}
+        {% if p.is_featured %}<span class="status-confirmed">Featured</span>{% endif %}
+        {% if not p.is_active %}<span class="status-cancelled">Hidden</span>{% endif %}
+    </div>
+    <a href="{{ p.get_absolute_url }}" class="cart-item-remove">View</a>
+    <a href="{% url 'product_update' p.id %}" class="btn-premium" style="padding:.45rem 1rem;">Edit</a>
+    <a href="{% url 'product_delete' p.id %}" class="cart-item-remove">Delete</a>
+</div>
+{% empty %}
+<p class="text-muted">No products yet.</p>
+{% endfor %}
+{% endblock %}

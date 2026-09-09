@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Pay for Order #{{ order.id }} - KARDAMOM{% endblock %}
+
+{% block content %}
+<div class="section-title">Pay ₹{{ order.total|floatformat:2 }} for Order #{{ order.id }}</div>
+
+{% if gateway == 'razorpay' %}
+<p class="text-muted">Pay securely with Razorpay (UPI, cards, netbanking).</p>
+<button id="rzp-btn" class="btn-premium">Pay with Razorpay</button>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+document.getElementById('rzp-btn').onclick = function () {
+    var rzp = new Razorpay({
+        key: "{{ key_id }}",
+        amount: "{{ amount_paise }}",
+        currency: "INR",
+        name: "KARDAMOM",
+        order_id: "{{ gateway_order_id }}",
+        handler: function (resp) {
+            var f = document.createElement('form');
+            f.method = 'POST'; f.action = "{% url 'payment_success' %}";
+            var csrf = document.createElement('input');
+            csrf.name = 'csrfmiddlewaretoken'; csrf.value = "{{ csrf_token }}";
+            f.appendChild(csrf);
+            [['order_id', "{{ order.id }}"],
+             ['razorpay_order_id', resp.razorpay_order_id],
+             ['razorpay_payment_id', resp.razorpay_payment_id],
+             ['razorpay_signature', resp.razorpay_signature]].forEach(function (kv) {
+                var i = document.createElement('input');
+                i.name = kv[0]; i.value = kv[1]; f.appendChild(i);
+            });
+            document.body.appendChild(f); f.submit();
+        }
+    });
+    rzp.open();
+};
+</script>
+{% elif gateway == 'stripe' %}
+<p class="text-muted">Complete payment with Stripe.</p>
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+var stripe = Stripe("{{ key_id }}");
+var btn = document.getElementById('stripe-btn');
+if (btn) btn.onclick = function () {
+    stripe.confirmPayment({clientSecret: "{{ client_secret }}",
+        confirmParams: {return_url: window.location.origin + "{% url 'payment_success' %}?order_id={{ order.id }}"}});
+};
+</script>
+<button id="stripe-btn" class="btn-premium">Pay with Stripe</button>
+<form method="post" action="{% url 'payment_success' %}" class="mt-2">
+    {% csrf_token %}
+    <input type="hidden" name="order_id" value="{{ order.id }}">
+    <input type="hidden" name="stripe_demo" value="1">
+    <button type="submit" class="btn-premium-secondary">Simulate successful Stripe payment (demo)</button>
+</form>
+{% endif %}
+
+<p class="mt-3"><a href="{% url 'order_detail' order.id %}">Back to order</a></p>
+{% endblock %}

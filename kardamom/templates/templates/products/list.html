@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Products - KARDAMOM{% endblock %}
+
+{% block content %}
+<div class="section-title">Products</div>
+
+<form method="get" class="row g-2 mb-4">
+    <div class="col-md-4">
+        <input type="text" name="q" class="form-control" placeholder="Search products..." value="{{ current_query|default:'' }}">
+    </div>
+    <div class="col-md-3">
+        <select name="category" class="form-select">
+            <option value="">All Categories</option>
+            {% for cat in categories %}
+            <option value="{{ cat.slug }}" {% if current_category == cat.slug %}selected{% endif %}>{{ cat.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-2">
+        <select name="pack_size" class="form-select">
+            <option value="">Pack Size</option>
+            <option value="100g" {% if current_pack_size == '100g' %}selected{% endif %}>100 g</option>
+            <option value="250g" {% if current_pack_size == '250g' %}selected{% endif %}>250 g</option>
+            <option value="500g" {% if current_pack_size == '500g' %}selected{% endif %}>500 g</option>
+            <option value="1kg" {% if current_pack_size == '1kg' %}selected{% endif %}>1 kg</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <select name="sort" class="form-select">
+            <option value="name" {% if current_sort == 'name' %}selected{% endif %}>Name</option>
+            <option value="price" {% if current_sort == 'price' %}selected{% endif %}>Price</option>
+        </select>
+    </div>
+    <div class="col-md-1">
+        <button type="submit" class="btn-premium w-100">Go</button>
+    </div>
+</form>
+
+<div class="product-grid">
+    {% for product in page_obj %}
+    <a href="{{ product.get_absolute_url }}" class="product-card">
+        {% include "products/_img.html" with product=product %}
+        <div class="product-info">
+            <div class="product-name">{{ product.name }}</div>
+            <div class="product-price">₹{{ product.price|floatformat:2 }}</div>
+            <div class="product-pack-size">{{ product.get_pack_size_display }} · {{ product.category.name }}</div>
+        </div>
+    </a>
+    {% empty %}
+    <p class="text-muted">No products match your filters.</p>
+    {% endfor %}
+</div>
+
+{% if page_obj.has_other_pages %}
+<nav class="mt-4">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&q={{ current_query|default:'' }}">Previous</a></li>
+        {% endif %}
+        <li class="page-item disabled"><a class="page-link" href="#">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</a></li>
+        {% if page_obj.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&q={{ current_query|default:'' }}">Next</a></li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}

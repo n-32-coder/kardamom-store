@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Cart - KARDAMOM{% endblock %}
+
+{% block content %}
+<div class="section-title">Your Cart</div>
+{% if items %}
+<p class="section-sub">{{ items|length }} item{{ items|length|pluralize }} · secure checkout</p>
+{% for item in items %}
+<div class="cart-item">
+{% include "products/_img.html" with product=item.product cls="cart-thumb" %}
+    <div class="cart-item-details">
+        <a href="{{ item.product.get_absolute_url }}"><strong>{{ item.product.name }}</strong></a>
+        <span class="text-muted">· {{ item.product.get_pack_size_display }}</span><br>
+        <span>₹{{ item.price_at_addition|floatformat:2 }} × {{ item.quantity }} = <strong>₹{{ item.subtotal|floatformat:2 }}</strong></span>
+    </div>
+    <a href="{% url 'cart_remove' item.id %}" class="cart-item-remove">Remove</a>
+</div>
+{% endfor %}
+<div class="checkout-section mt-3" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+    <div><span class="text-muted">Total payable</span><h3 class="serif" style="margin:0;color:var(--cardamom-primary);">₹{{ total|floatformat:2 }}</h3></div>
+    <a href="{% url 'checkout' %}" class="btn-premium">Proceed to Checkout →</a>
+</div>
+{% else %}
+<div class="checkout-section" style="text-align:center;">
+    <h3 class="serif">Your cart is empty</h3>
+    <p class="section-sub">The finest pods are waiting on the shelf.</p>
+    <a href="{% url 'product_list' %}" class="btn-premium">Browse Products</a>
+</div>
+{% endif %}
+{% endblock %}

@@ -144,6 +144,10 @@ def payment_success(request):
 
 @login_required
 def order_list(request):
+    if request.user.is_staff:
+        return render(request, 'orders/staff_list.html', {
+            'orders': Order.objects.select_related('customer').all(),
+        })
     return render(request, 'orders/list.html', {
         'orders': request.user.orders.all(),
     })
@@ -202,9 +206,12 @@ def dashboard(request):
         .order_by('-qty')[:5]
     )
     recent_orders = list(Order.objects.select_related('customer')[:10])
+    from customers.models import Customer
     return render(request, 'orders/dashboard.html', {
         'revenue': stats['revenue'] or 0,
         'order_count': stats['count'] or 0,
+        'product_count': Product.objects.count(),
+        'customer_count': Customer.objects.count(),
         'by_status': by_status,
         'trend': trend,
         'low_stock': low_stock,

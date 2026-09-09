@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}My Orders - KARDAMOM{% endblock %}
+
+{% block content %}
+<div class="section-title">My Orders</div>
+{% for order in orders %}
+<div class="card mb-3">
+    <div class="card-body">
+        <strong>Order #{{ order.id }}</strong>
+        <span class="status-{{ order.status }}">{{ order.get_status_display }}</span><br>
+        <span>₹{{ order.total|floatformat:2 }} · {{ order.get_payment_method_display }} · {{ order.created_at|date:"M d, Y" }}</span><br>
+        <a href="{% url 'order_detail' order.id %}">View details</a>
+    </div>
+</div>
+{% empty %}
+<p class="text-muted">No orders yet. <a href="{% url 'product_list' %}">Start shopping</a>.</p>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Delete {{ category.name }} - KARDAMOM{% endblock %}
+
+{% block content %}
+<div class="section-title">Delete Category</div>
+<div class="checkout-section" style="max-width:520px;">
+    <p>Delete <strong>{{ category.name }}</strong>? Its {{ category.products.count }} product(s) will be deleted too.</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn-premium">Yes, delete</button>
+        <a href="{% url 'category_manage_list' %}" class="btn-premium-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

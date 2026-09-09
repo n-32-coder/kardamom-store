@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Remove Review - KARDAMOM{% endblock %}
+
+{% block content %}
+<div class="section-title">Remove Review</div>
+<div class="checkout-section" style="max-width:520px;">
+    <p>Remove this {{ review.rating }}/5 review of <strong>{{ review.product.name }}</strong> by {{ review.customer.username }}?</p>
+    <p class="text-muted">“{{ review.comment|truncatewords:25 }}”</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn-premium">Yes, remove</button>
+        <a href="{% url 'review_manage_list' %}" class="btn-premium-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

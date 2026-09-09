@@ -203,3 +203,73 @@ def product_manage_delete(request, pk):
         messages.success(request, f'{name} deleted.')
         return redirect('product_manage_list')
     return render(request, 'products/manage_confirm_delete.html', {'product': product})
+
+
+@staff_member_required
+def category_manage_list(request):
+    items = ProductCategory.objects.order_by('name')
+    return render(request, 'products/category_list.html', {'items': items})
+
+
+@staff_member_required
+def category_manage_edit(request, pk=None):
+    from django.contrib import messages
+    from django.shortcuts import redirect
+    from django.utils.text import slugify
+
+    from .forms import CategoryForm
+
+    category = get_object_or_404(ProductCategory, pk=pk) if pk else None
+    if request.method == 'POST':
+        form = CategoryForm(request.POST, instance=category)
+        if form.is_valid():
+            obj = form.save(commit=False)
+            if not obj.slug:
+                obj.slug = slugify(obj.name)
+            obj.save()
+            messages.success(request, f'Category {obj.name} saved.')
+            return redirect('category_manage_list')
+    else:
+        form = CategoryForm(instance=category)
+    return render(request, 'products/category_form.html', {'form': form, 'category': category})
+
+
+@staff_member_required
+def category_manage_delete(request, pk):
+    from django.contrib import messages
+    from django.shortcuts import redirect
+
+    category = get_object_or_404(ProductCategory, pk=pk)
+    if request.method == 'POST':
+        name = category.name
+        category.delete()
+        messages.success(request, f'Category {name} deleted.')
+        return redirect('category_manage_list')
+    return render(request, 'products/category_confirm_delete.html', {'category': category})
+
+
+@staff_member_required
+def customer_manage_list(request):
+    from customers.models import Customer
+
+    customers = Customer.objects.order_by('-date_joined')
+    return render(request, 'customers/manage_list.html', {'customers': customers})
+
+
+@staff_member_required
+def review_manage_list(request):
+    reviews = ProductReview.objects.select_related('product', 'customer').order_by('-created_at')
+    return render(request, 'products/review_list.html', {'reviews': reviews})
+
+
+@staff_member_required
+def review_manage_delete(request, pk):
+    from django.contrib import messages
+    from django.shortcuts import redirect
+
+    review = get_object_or_404(ProductReview, pk=pk)
+    if request.method == 'POST':
+        review.delete()
+        messages.success(request, 'Review removed.')
+        return redirect('review_manage_list')
+    return render(request, 'products/review_confirm_delete.html', {'review': review})

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Reviews - KARDAMOM{% endblock %}
+
+{% block content %}
+<div class="section-title">Customer Reviews</div>
+<p class="section-sub">Remove anything inappropriate — one click, gone.</p>
+{% for r in reviews %}
+<div class="cart-item">
+    <div class="cart-item-details">
+        <strong>{{ r.product.name }}</strong> — {{ r.rating }}/5 by {{ r.customer.username }}
+        {% if r.verified_purchase %}<span class="status-delivered">Verified</span>{% endif %}<br>
+        <span>{{ r.comment }}</span><br>
+        <span class="text-muted">{{ r.created_at|date:"M d, Y" }}</span>
+    </div>
+    <a href="{% url 'review_delete' r.id %}" class="cart-item-remove">Remove</a>
+</div>
+{% empty %}
+<p class="text-muted">No reviews yet.</p>
+{% endfor %}
+{% endblock %}
