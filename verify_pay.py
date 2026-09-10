@@ -18,8 +18,8 @@ assert not razorpay_configured() and not stripe_configured()
 
 c = Client()
 assert c.login(username='admin', password=os.environ.get('KARDAMOM_ADMIN_PASSWORD', 'Kardamom#3527631a'))
-p = Product.objects.filter(stock__gt=2).first()
-c.get('/cart/add/%d/?quantity=1' % p.id)
+p = Product.objects.filter(is_active=True, stock__gt=2).first()
+c.get(f'/cart/add/{p.id}/?quantity=1')
 
 r = c.post('/orders/checkout/', {
     'address': 'X', 'phone': '9999999999', 'payment_method': 'razorpay',

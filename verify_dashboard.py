@@ -29,7 +29,7 @@ order.refresh_from_db()
 assert r.status_code == 302 and order.status == 'delivered', 'orders-page status broken'
 print(f'order #{order.id} -> delivered from orders page: OK')
 
-p = Product.objects.order_by('stock').first()
+p = Product.objects.filter(is_active=True).order_by('stock').first()
 before = p.stock
 r = c.post('/products/manage/', {'action': 'stock', 'product_id': p.id, 'delta': '25'})
 p.refresh_from_db()

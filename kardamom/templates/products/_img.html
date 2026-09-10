@@ -6,8 +6,6 @@
 <img src="{% static 'images/seeds.png' %}" alt="{{ product.name }}" class="{{ cls|default:'product-image' }}">
 {% elif product.category.slug == 'powder' %}
 <img src="{% static 'images/powder.png' %}" alt="{{ product.name }}" class="{{ cls|default:'product-image' }}">
-{% elif product.category.slug == 'bold' %}
-<img src="{% static 'images/product-bold.svg' %}" alt="{{ product.name }}" class="{{ cls|default:'product-image' }}">
 {% elif product.category.slug == 'gifts' %}
 <img src="{% static 'images/gift-pack.png' %}" alt="{{ product.name }}" class="{{ cls|default:'product-image' }}">
 {% elif product.category.slug == 'green' %}

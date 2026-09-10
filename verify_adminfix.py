@@ -22,7 +22,7 @@ assert r.status_code == 200, 'staff order detail still 404'
 print(f'staff opens order #{order.id}: OK')
 
 # 2. Stock steppers on manage list.
-p = Product.objects.order_by('stock').first()
+p = Product.objects.filter(is_active=True).order_by('stock').first()
 before = p.stock
 r = c.post('/products/manage/', {'action': 'stock', 'product_id': p.id, 'delta': '10'})
 p.refresh_from_db()

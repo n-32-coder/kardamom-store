@@ -16,7 +16,7 @@ pw = os.environ.get('KARDAMOM_ADMIN_PASSWORD', 'Kardamom#3527631a')
 assert c.login(username='admin', password=pw)
 
 # Payment states: COD -> pending, gateway success -> paid, staff override.
-p = Product.objects.filter(stock__gt=2).first()
+p = Product.objects.filter(is_active=True, stock__gt=2).first()
 c.get(f'/cart/add/{p.id}/?quantity=1')
 r = c.post('/orders/checkout/', {'address': 'X', 'phone': '9', 'payment_method': 'cod'})
 order = Order.objects.latest('id')

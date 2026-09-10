@@ -16,14 +16,14 @@ pw = os.environ.get('KARDAMOM_ADMIN_PASSWORD', 'Kardamom#3527631a')
 assert c.login(username='admin', password=pw)
 
 # Categories CRUD.
-r = c.post('/categories/manage/add/', {'name': 'Cardamom Seeds', 'slug': '', 'description': 'Seeds'})
+r = c.post('/categories/manage/add/', {'name': 'QA Category', 'slug': '', 'description': 'temp'})
 assert r.status_code == 302, 'category create broken'
-cat = ProductCategory.objects.get(slug='cardamom-seeds')
+cat = ProductCategory.objects.get(slug='qa-category')
 print('category create (auto-slug): OK')
-r = c.post(f'/categories/manage/{cat.id}/edit/', {'name': 'Cardamom Seeds', 'slug': 'cardamom-seeds', 'description': 'Seeds'})
+r = c.post(f'/categories/manage/{cat.id}/edit/', {'name': 'QA Category', 'slug': 'qa-category', 'description': 'Seeds'})
 assert r.status_code == 302, 'category edit broken'
 r = c.post(f'/categories/manage/{cat.id}/delete/')
-assert r.status_code == 302 and not ProductCategory.objects.filter(slug='cardamom-seeds').exists()
+assert r.status_code == 302 and not ProductCategory.objects.filter(slug='qa-category').exists()
 print('category edit + delete: OK')
 
 # Product grade + size_mm.

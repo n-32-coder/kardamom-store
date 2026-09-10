@@ -16,7 +16,7 @@ c = Client()
 assert c.login(username='demo', password='demo123'), 'demo login failed'
 
 # Tracking timeline on own order (create one first).
-p = Product.objects.filter(stock__gt=2).first()
+p = Product.objects.filter(is_active=True, stock__gt=2).first()
 c.get(f'/cart/add/{p.id}/?quantity=1')
 c.post('/orders/checkout/', {'address': 'X', 'phone': '9', 'payment_method': 'cod'})
 order = Order.objects.filter(customer__username='demo').latest('id')

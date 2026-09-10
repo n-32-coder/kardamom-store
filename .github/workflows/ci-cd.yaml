@@ -27,12 +27,28 @@ jobs:
         run: python manage.py check
       - name: Seed demo data
         run: python seed_kardamom.py
+      - name: Build real catalogue
+        run: python rebuild_catalogue.py
       - name: Smoke tests
         run: |
           python verify_kardamom.py
           python verify_cart.py
           python verify_full.py
           python verify_pay.py
+      - name: Feature tests
+        run: |
+          python verify_catalogue.py
+          python verify_dashboard.py
+          python verify_manage.py
+          python verify_admin_spec.py
+          python verify_adminfix.py
+          python verify_spec2.py
+          python verify_rolenav.py
+          python verify_customer.py
+          python verify_gift.py
+          python verify_premium_photo.py
+          python verify_powder_photo.py
+          python verify_seeds_photo.py
 
   image:
     needs: build-test

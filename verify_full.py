@@ -13,7 +13,7 @@ from products.models import Product
 c = Client()
 assert c.login(username='admin', password=os.environ.get('KARDAMOM_ADMIN_PASSWORD', 'Kardamom#3527631a')), 'login failed'
 
-p = Product.objects.filter(stock__gt=2).first()
+p = Product.objects.filter(is_active=True, stock__gt=2).first()
 print(f'using product: {p.name}')
 
 r = c.get('/cart/add/%d/?quantity=1' % p.id)
