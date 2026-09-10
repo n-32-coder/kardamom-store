@@ -24,15 +24,16 @@
                     <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'product_list' %}">Products</a></li>
                     {% if user.is_authenticated %}
-                    <li class="nav-item"><a class="nav-link" href="{% url 'cart_detail' %}">Cart</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'wishlist' %}">Wishlist</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'order_list' %}">Orders</a></li>
                     {% if user.is_staff %}
                     <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'product_manage_list' %}">Manage</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'category_manage_list' %}">Categories</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'customer_manage_list' %}">Customers</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'review_manage_list' %}">Reviews</a></li>
+                    {% else %}
+                    <li class="nav-item"><a class="nav-link" href="{% url 'cart_detail' %}">Cart</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'wishlist' %}">Wishlist</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'order_list' %}">Orders</a></li>
                     {% endif %}
                     <li class="nav-item"><a class="nav-link" href="{% url 'profile' %}">Profile</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
