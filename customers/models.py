@@ -3,8 +3,16 @@ from django.contrib.auth.models import AbstractUser
 
 
 class Customer(AbstractUser):
-    """Custom user model for KARDAMOM premium store."""
+    """Custom user model for KARDAMOM premium store. Email is the login identity."""
     PHONE_MAX_LENGTH = 20
+
+    username = models.CharField(
+        max_length=150,
+        unique=False,
+        help_text='Display name. Need not be unique.',
+        verbose_name='display name',
+    )
+    email = models.EmailField(unique=True, verbose_name='email address')
     
     phone = models.CharField(max_length=PHONE_MAX_LENGTH, blank=True, null=True)
     address = models.TextField(blank=True, null=True)
@@ -21,6 +29,9 @@ class Customer(AbstractUser):
         verbose_name = 'Customer'
         verbose_name_plural = 'Customers'
         ordering = ['-created_at']
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
 
     def __str__(self):
         return self.username
