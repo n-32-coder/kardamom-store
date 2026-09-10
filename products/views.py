@@ -272,7 +272,21 @@ def category_manage_delete(request, pk):
 
 @staff_member_required
 def customer_manage_list(request):
+    from django.contrib import messages
+    from django.shortcuts import redirect
+
     from customers.models import Customer
+
+    if request.method == 'POST':
+        customer = get_object_or_404(Customer, pk=request.POST.get('user_id'))
+        if customer == request.user:
+            messages.error(request, 'You cannot deactivate your own account.')
+        else:
+            customer.is_active = not customer.is_active
+            customer.save(update_fields=['is_active'])
+            state = 'activated' if customer.is_active else 'deactivated'
+            messages.success(request, f'{customer.username} {state}.')
+        return redirect('customer_manage_list')
 
     customers = Customer.objects.order_by('-date_joined')
     return render(request, 'customers/manage_list.html', {'customers': customers})

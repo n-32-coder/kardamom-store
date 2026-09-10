@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import redirect, render
 
+from .forms import CustomerProfileForm
 from .models import Customer
 
 
@@ -30,4 +31,12 @@ def register(request):
 
 @login_required
 def profile(request):
-    return render(request, 'customers/profile.html', {'customer': request.user})
+    if request.method == 'POST':
+        form = CustomerProfileForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Profile updated.')
+            return redirect('profile')
+    else:
+        form = CustomerProfileForm(instance=request.user)
+    return render(request, 'customers/profile.html', {'customer': request.user, 'form': form})

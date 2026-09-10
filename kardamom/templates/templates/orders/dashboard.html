@@ -5,6 +5,12 @@
 {% block content %}
 <div class="section-title">Admin Dashboard</div>
 <p class="section-sub">Store at a glance — pick a section below to manage it.</p>
+<form method="get" class="row g-2 mb-3" style="max-width:560px;">
+    <div class="col"><input type="month" name="month" class="form-control" value="{{ month|default:'' }}"></div>
+    <div class="col-auto"><button type="submit" class="btn-premium">Filter Month</button></div>
+    {% if month %}<div class="col-auto"><a href="{% url 'dashboard' %}" class="btn-premium-secondary">All Time</a></div>{% endif %}
+    <div class="col-auto"><a href="{% url 'dashboard' %}?{% if month %}month={{ month }}&{% endif %}export=csv" class="btn-premium-secondary">Export CSV</a></div>
+</form>
 
 <div class="row mb-4">
     <div class="col-md-3 mb-3">

@@ -28,6 +28,12 @@ class Order(models.Model):
     phone = models.CharField(max_length=20)
     payment_method = models.CharField(max_length=20, choices=PAYMENT_CHOICES, default='cod')
     payment_id = models.CharField(max_length=100, blank=True)
+    PAYMENT_STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('paid', 'Paid'),
+        ('failed', 'Failed'),
+    ]
+    payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

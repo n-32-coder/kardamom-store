@@ -31,14 +31,15 @@ def _build_order(user, address, phone, payment_method, items, total):
     return order
 
 
-def _finalize_order(order):
-    """Confirm order: decrement stock, mark confirmed, notify."""
+def _finalize_order(order, paid=False):
+    """Confirm order: decrement stock, mark confirmed, set payment state, notify."""
     for item in order.items.select_related('product'):
         if item.product.stock >= item.quantity:
             item.product.stock -= item.quantity
             item.product.save(update_fields=['stock'])
     order.status = 'confirmed'
-    order.save(update_fields=['status'])
+    order.payment_status = 'paid' if paid else 'pending'
+    order.save(update_fields=['status', 'payment_status'])
     Cart.objects.filter(customer=order.customer).delete()
     if order.customer.email:
         send_mail(
@@ -74,7 +75,7 @@ def checkout(request):
 
         if payment_method in ('cod', 'upi'):
             order = _build_order(request.user, address, phone, payment_method, items, total)
-            _finalize_order(order)
+            _finalize_order(order, paid=(payment_method == 'upi'))
             messages.success(request, f'Order #{order.id} placed successfully!')
             return redirect('order_detail', order_id=order.id)
 
@@ -137,7 +138,7 @@ def payment_success(request):
         order.payment_id = request.POST.get('razorpay_payment_id', order.payment_id)
 
     order.save(update_fields=['payment_id'])
-    _finalize_order(order)
+    _finalize_order(order, paid=True)
     messages.success(request, f'Payment received — order #{order.id} confirmed!')
     return redirect('order_detail', order_id=order.id)
 
@@ -150,8 +151,14 @@ def order_list(request):
             new_status = request.POST.get('status')
             if new_status in dict(Order.STATUS_CHOICES):
                 order.status = new_status
-                order.save(update_fields=['status'])
-                messages.success(request, f'Order #{order.id} → {order.get_status_display()}.')
+            new_pay = request.POST.get('payment_status')
+            if new_pay in dict(Order.PAYMENT_STATUS_CHOICES):
+                order.payment_status = new_pay
+            order.save(update_fields=['status', 'payment_status'])
+            messages.success(
+                request,
+                f'Order #{order.id} → {order.get_status_display()} / {order.get_payment_status_display()}.',
+            )
             return redirect('order_list')
         orders = Order.objects.select_related('customer').all()
         who = request.GET.get('customer', '').strip()
@@ -194,9 +201,31 @@ def dashboard(request):
                 messages.success(request, f'Order #{order.id} → {order.get_status_display()}.')
         return redirect('dashboard')
 
-    stats = Order.objects.aggregate(revenue=Sum('total'), count=Count('id'))
+    stats_qs = Order.objects.all()
+    month = request.GET.get('month', '').strip()
+    if month:
+        try:
+            year, mon = map(int, month.split('-'))
+            stats_qs = stats_qs.filter(created_at__year=year, created_at__month=mon)
+        except ValueError:
+            month = ''
+    if request.GET.get('export') == 'csv':
+        import csv
+
+        from django.http import HttpResponse
+
+        resp = HttpResponse(content_type='text/csv')
+        resp['Content-Disposition'] = f'attachment; filename="kardamom-sales-{month or "all"}.csv"'
+        w = csv.writer(resp)
+        w.writerow(['order', 'date', 'customer', 'status', 'payment', 'total'])
+        for o in stats_qs.select_related('customer').order_by('id'):
+            w.writerow([o.id, o.created_at.date(), o.customer.username,
+                        o.status, o.payment_status, o.total])
+        return resp
+
+    stats = stats_qs.aggregate(revenue=Sum('total'), count=Count('id'))
     by_status = list(
-        Order.objects.values('status').annotate(count=Count('id'), revenue=Sum('total'))
+        stats_qs.values('status').annotate(count=Count('id'), revenue=Sum('total'))
     )
     week_ago = timezone.now() - timedelta(days=6)
     trend = list(
@@ -217,6 +246,7 @@ def dashboard(request):
     return render(request, 'orders/dashboard.html', {
         'revenue': stats['revenue'] or 0,
         'order_count': stats['count'] or 0,
+        'month': month,
         'product_count': Product.objects.count(),
         'customer_count': Customer.objects.count(),
         'by_status': by_status,
