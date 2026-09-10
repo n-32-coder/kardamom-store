@@ -3,8 +3,8 @@
 {% block title %}Dashboard - KARDAMOM{% endblock %}
 
 {% block content %}
-<div class="section-title">Store Dashboard</div>
-<p class="section-sub">Live pulse of your store — update orders and restock without leaving this page.</p>
+<div class="section-title">Admin Dashboard</div>
+<p class="section-sub">Store at a glance — pick a section below to manage it.</p>
 
 <div class="row mb-4">
     <div class="col-md-3 mb-3">
@@ -27,7 +27,7 @@
     </div>
     <div class="col-md-3 mb-3">
         <div class="card stat-card"><div class="card-body">
-            <h6>Low-Stock Products</h6>
+            <h6>Low-Stock Alerts</h6>
             <h3>{{ low_count }}</h3>
         </div></div>
     </div>
@@ -48,61 +48,33 @@
     </div>
 </div>
 
-<div class="row">
-    <div class="col-lg-7 mb-3">
+<div class="section-title">Manage</div>
+<div class="cat-strip">
+    <a href="{% url 'order_list' %}" class="cat-tile"><b>Orders</b><span>View all orders, update status</span></a>
+    <a href="{% url 'product_manage_list' %}" class="cat-tile"><b>Products</b><span>Add, edit, stock, delete</span></a>
+    <a href="{% url 'category_manage_list' %}" class="cat-tile"><b>Categories</b><span>Shelves of the store</span></a>
+    <a href="{% url 'customer_manage_list' %}" class="cat-tile"><b>Customers</b><span>Accounts &amp; history</span></a>
+    <a href="{% url 'review_manage_list' %}" class="cat-tile"><b>Reviews</b><span>Moderate feedback</span></a>
+</div>
+
+<div class="row mt-4">
+    <div class="col-lg-6 mb-3">
         <div class="card"><div class="card-body">
-            <h6>Recent Orders — click to update status</h6>
-            {% for order in recent_orders %}
-            <form method="post" action="{% url 'dashboard' %}" class="cart-item">
-                {% csrf_token %}
-                <input type="hidden" name="action" value="status">
-                <input type="hidden" name="order_id" value="{{ order.id }}">
-                <div class="cart-item-details">
-                    <a href="{% url 'order_detail' order.id %}"><strong>#{{ order.id }}</strong></a>
-                    {{ order.customer.username }} · ₹{{ order.total|floatformat:2 }}<br>
-                    <span class="status-{{ order.status }}">{{ order.get_status_display }}</span>
-                </div>
-                <select name="status" class="form-select" style="max-width:150px;">
-                    {% for val, label in status_choices %}
-                    <option value="{{ val }}" {% if order.status == val %}selected{% endif %}>{{ label }}</option>
-                    {% endfor %}
-                </select>
-                <button type="submit" class="btn-premium" style="padding:.5rem 1rem;">Set</button>
-            </form>
-            {% empty %}
-            <p class="text-muted">No orders yet.</p>
-            {% endfor %}
-        </div></div>
-    </div>
-    <div class="col-lg-5 mb-3">
-        <div class="card mb-3"><div class="card-body">
-            <h6>Low Stock Alert (&lt; 10) — quick restock</h6>
-            {% for p in low_stock %}
-            <form method="post" action="{% url 'dashboard' %}" class="cart-item">
-                {% csrf_token %}
-                <input type="hidden" name="action" value="restock">
-                <input type="hidden" name="product_id" value="{{ p.id }}">
-                <div class="cart-item-details">
-                    <strong>{{ p.name }}</strong><br>
-                    <span class="text-muted">{{ p.stock }} left</span>
-                </div>
-                <input type="number" name="qty" value="20" min="1" class="form-control" style="max-width:90px;">
-                <button type="submit" class="btn-premium" style="padding:.5rem 1rem;">Add</button>
-            </form>
-            {% empty %}
-            <p class="text-muted">Stock levels healthy.</p>
-            {% endfor %}
-        </div></div>
-        <div class="card"><div class="card-body">
-            <h6>Top Products</h6>
+            <h6>Best-Selling Products</h6>
             {% for row in top_products %}
             <p>{{ row.product__name }} — <strong>{{ row.qty }}</strong> sold</p>
             {% empty %}
             <p class="text-muted">Nothing sold yet.</p>
             {% endfor %}
-            <hr>
+        </div></div>
+    </div>
+    <div class="col-lg-6 mb-3">
+        <div class="card"><div class="card-body">
+            <h6>Sales by Status</h6>
             {% for row in by_status %}
             <p><span class="status-{{ row.status }}">{{ row.status }}</span> — {{ row.count }} orders · ₹{{ row.revenue|floatformat:2 }}</p>
+            {% empty %}
+            <p class="text-muted">No orders yet.</p>
             {% endfor %}
         </div></div>
     </div>
@@ -126,7 +98,7 @@
     });
     new Chart(document.getElementById('statusChart'), {
         type: 'doughnut',
-        data: {labels: statusLabels, datasets: [{data: statusData, backgroundColor: ['#e0a23e', '#6db3e8', '#b48ede', '#e8934e', '#4caf7d', '#8d8577'], borderWidth: 0}]},
+        data: {labels: statusLabels, datasets: [{data: statusData, backgroundColor: ['#e0a23e', '#6db3e8', '#b48ede', '#c9a24b', '#e8934e', '#4caf7d', '#8d8577'], borderWidth: 0}]},
         options: {plugins: {legend: {position: 'bottom', labels: {color: '#a89c86', boxWidth: 12}}}}
     });
 })();

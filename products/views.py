@@ -164,8 +164,30 @@ def healthz(request):
 
 @staff_member_required
 def product_manage_list(request):
+    from django.contrib import messages
+    from django.db.models import Q
+    from django.shortcuts import redirect
+
+    if request.method == 'POST' and request.POST.get('action') == 'stock':
+        product = get_object_or_404(Product, pk=request.POST.get('product_id'))
+        try:
+            delta = int(request.POST.get('delta', 0))
+        except ValueError:
+            delta = 0
+        if delta and product.stock + delta >= 0:
+            product.stock += delta
+            product.save(update_fields=['stock'])
+            messages.success(request, f'{product.name} stock → {product.stock}.')
+        return redirect('product_manage_list')
+
     items = Product.objects.select_related('category').order_by('name')
-    return render(request, 'products/manage_list.html', {'items': items})
+    query = request.GET.get('q', '').strip()
+    if query:
+        items = items.filter(
+            Q(name__icontains=query) | Q(sku__icontains=query)
+            | Q(grade__icontains=query)
+        )
+    return render(request, 'products/manage_list.html', {'items': items, 'query': query})
 
 
 @staff_member_required

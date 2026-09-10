@@ -153,9 +153,14 @@ def order_list(request):
                 order.save(update_fields=['status'])
                 messages.success(request, f'Order #{order.id} → {order.get_status_display()}.')
             return redirect('order_list')
+        orders = Order.objects.select_related('customer').all()
+        who = request.GET.get('customer', '').strip()
+        if who:
+            orders = orders.filter(customer__username__icontains=who)
         return render(request, 'orders/staff_list.html', {
-            'orders': Order.objects.select_related('customer').all(),
+            'orders': orders,
             'status_choices': Order.STATUS_CHOICES,
+            'who': who,
         })
     return render(request, 'orders/list.html', {
         'orders': request.user.orders.all(),
@@ -164,7 +169,10 @@ def order_list(request):
 
 @login_required
 def order_detail(request, order_id):
-    order = get_object_or_404(Order, id=order_id, customer=request.user)
+    if request.user.is_staff:
+        order = get_object_or_404(Order, id=order_id)
+    else:
+        order = get_object_or_404(Order, id=order_id, customer=request.user)
     return render(request, 'orders/detail.html', {'order': order})
 
 
@@ -184,16 +192,6 @@ def dashboard(request):
                 order.status = new_status
                 order.save(update_fields=['status'])
                 messages.success(request, f'Order #{order.id} → {order.get_status_display()}.')
-        elif action == 'restock':
-            product = get_object_or_404(Product, id=request.POST.get('product_id'))
-            try:
-                qty = max(1, int(request.POST.get('qty', 0)))
-            except ValueError:
-                qty = 0
-            if qty:
-                product.stock += qty
-                product.save(update_fields=['stock'])
-                messages.success(request, f'{product.name} restocked +{qty}.')
         return redirect('dashboard')
 
     stats = Order.objects.aggregate(revenue=Sum('total'), count=Count('id'))

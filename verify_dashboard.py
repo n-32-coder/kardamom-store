@@ -31,10 +31,10 @@ print(f'order #{order.id} -> delivered from orders page: OK')
 
 p = Product.objects.order_by('stock').first()
 before = p.stock
-r = c.post('/orders/dashboard/', {'action': 'restock', 'product_id': p.id, 'qty': '25'})
+r = c.post('/products/manage/', {'action': 'stock', 'product_id': p.id, 'delta': '25'})
 p.refresh_from_db()
-assert r.status_code == 302 and p.stock == before + 25, 'restock broken'
-print(f'{p.name} restocked {before} -> {p.stock}: OK')
+assert r.status_code == 302 and p.stock == before + 25, 'stepper broken'
+print(f'{p.name} stepper {before} -> {p.stock}: OK')
 
 c.logout()
 r = c.get('/orders/dashboard/')

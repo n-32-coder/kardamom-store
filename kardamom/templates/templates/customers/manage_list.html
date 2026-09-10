@@ -11,7 +11,8 @@
         <strong>{{ c.username }}</strong>
         {% if c.is_staff %}<span class="status-confirmed">Staff</span>{% endif %}<br>
         <span class="text-muted">{{ c.email|default:"no email" }} · {{ c.phone|default:"no phone" }}</span><br>
-        <span class="text-muted">Joined {{ c.date_joined|date:"M d, Y" }} · {{ c.orders.count }} order{{ c.orders.count|pluralize }}</span>
+        <span class="text-muted">Joined {{ c.date_joined|date:"M d, Y" }} · {{ c.orders.count }} order{{ c.orders.count|pluralize }}</span><br>
+        <a href="{% url 'order_list' %}?customer={{ c.username }}">View orders →</a>
     </div>
 </div>
 {% empty %}

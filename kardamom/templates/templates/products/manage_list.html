@@ -6,6 +6,10 @@
 <div class="section-title">Manage Products</div>
 <p class="section-sub">Add, edit, delete and control stock — changes go live instantly.</p>
 <a href="{% url 'product_create' %}" class="btn-premium mb-3">+ Add Product</a>
+<form method="get" class="row g-2 mb-3" style="max-width:480px;">
+    <div class="col"><input type="text" name="q" class="form-control" placeholder="Search name, SKU, grade..." value="{{ query|default:'' }}"></div>
+    <div class="col-auto"><button type="submit" class="btn-premium">Search</button></div>
+</form>
 
 {% for p in items %}
 <div class="cart-item">
@@ -16,6 +20,14 @@
         <span>₹{{ p.price|floatformat:2 }} · stock: <strong>{{ p.stock }}</strong></span>
         {% if p.grade %}<span class="text-muted">· {{ p.grade }}</span>{% endif %}
         {% if p.size_mm %}<span class="text-muted">· {{ p.size_mm }}mm</span>{% endif %}
+        <form method="post" action="{% url 'product_manage_list' %}" class="d-flex gap-1 align-items-center">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="stock">
+            <input type="hidden" name="product_id" value="{{ p.id }}">
+            <button type="submit" name="delta" value="-1" class="btn-premium-secondary" style="padding:.3rem .7rem;">−</button>
+            <button type="submit" name="delta" value="1" class="btn-premium-secondary" style="padding:.3rem .7rem;">+</button>
+            <button type="submit" name="delta" value="10" class="btn-premium-secondary" style="padding:.3rem .7rem;">+10</button>
+        </form>
         {% if p.is_featured %}<span class="status-confirmed">Featured</span>{% endif %}
         {% if not p.is_active %}<span class="status-cancelled">Hidden</span>{% endif %}
     </div>
