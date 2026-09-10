@@ -1,4 +1,4 @@
-"""Verify interactive staff dashboard: charts render, status + restock actions work."""
+"""Verify the overview dashboard: stats, charts, manage links; status via orders page."""
 import os
 
 import django
@@ -18,14 +18,16 @@ r = c.get('/orders/dashboard/')
 assert r.status_code == 200, 'dashboard broken'
 html = r.content.decode()
 assert 'trendChart' in html and 'statusChart' in html, 'charts missing'
-assert 'Recent Orders' in html, 'orders panel missing'
-print('dashboard renders with charts: OK')
+assert 'Recent Orders' not in html, 'dashboard still lists orders'
+for link in ['Manage', 'Categories', 'Customers', 'Reviews', 'Best-Selling']:
+    assert link in html, f'dashboard missing: {link}'
+print('overview dashboard (stats, charts, links): OK')
 
 order = Order.objects.first()
-r = c.post('/orders/dashboard/', {'action': 'status', 'order_id': order.id, 'status': 'shipped'})
+r = c.post('/orders/', {'order_id': order.id, 'status': 'delivered'})
 order.refresh_from_db()
-assert r.status_code == 302 and order.status == 'shipped', 'status update broken'
-print(f'order #{order.id} -> shipped: OK')
+assert r.status_code == 302 and order.status == 'delivered', 'orders-page status broken'
+print(f'order #{order.id} -> delivered from orders page: OK')
 
 p = Product.objects.order_by('stock').first()
 before = p.stock
@@ -34,7 +36,6 @@ p.refresh_from_db()
 assert r.status_code == 302 and p.stock == before + 25, 'restock broken'
 print(f'{p.name} restocked {before} -> {p.stock}: OK')
 
-# Non-staff cannot see it.
 c.logout()
 r = c.get('/orders/dashboard/')
 assert r.status_code in (302, 403), 'dashboard not staff-guarded'

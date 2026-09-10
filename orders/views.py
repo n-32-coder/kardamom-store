@@ -145,8 +145,17 @@ def payment_success(request):
 @login_required
 def order_list(request):
     if request.user.is_staff:
+        if request.method == 'POST':
+            order = get_object_or_404(Order, id=request.POST.get('order_id'))
+            new_status = request.POST.get('status')
+            if new_status in dict(Order.STATUS_CHOICES):
+                order.status = new_status
+                order.save(update_fields=['status'])
+                messages.success(request, f'Order #{order.id} → {order.get_status_display()}.')
+            return redirect('order_list')
         return render(request, 'orders/staff_list.html', {
             'orders': Order.objects.select_related('customer').all(),
+            'status_choices': Order.STATUS_CHOICES,
         })
     return render(request, 'orders/list.html', {
         'orders': request.user.orders.all(),
