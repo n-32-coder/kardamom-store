@@ -9,9 +9,10 @@ from django.test import Client
 
 from products.models import Product
 
-p = Product.objects.get(category__slug='premium-green')
+p = Product.objects.get(slug='premium-green-8mm-250g')
 p.image = 'products/premium-green.png'
-p.save(update_fields=['image'])
+p.is_active = True
+p.save(update_fields=['image', 'is_active'])
 print(f'image -> {p.image} on {p.name}')
 
 c = Client()
