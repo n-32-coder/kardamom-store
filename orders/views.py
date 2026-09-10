@@ -37,7 +37,7 @@ def _finalize_order(order, paid=False):
         if item.product.stock >= item.quantity:
             item.product.stock -= item.quantity
             item.product.save(update_fields=['stock'])
-    order.status = 'confirmed'
+    order.status = 'confirmed' if paid else 'pending'
     order.payment_status = 'paid' if paid else 'pending'
     order.save(update_fields=['status', 'payment_status'])
     Cart.objects.filter(customer=order.customer).delete()
@@ -176,11 +176,29 @@ def order_list(request):
 
 @login_required
 def order_detail(request, order_id):
+    from django.contrib import messages
+    from django.shortcuts import redirect
+
     if request.user.is_staff:
         order = get_object_or_404(Order, id=order_id)
     else:
         order = get_object_or_404(Order, id=order_id, customer=request.user)
-    return render(request, 'orders/detail.html', {'order': order})
+        if request.method == 'POST' and request.POST.get('action') == 'cancel':
+            if order.status == 'pending':
+                order.status = 'cancelled'
+                order.save(update_fields=['status'])
+                messages.success(request, f'Order #{order.id} cancelled.')
+            else:
+                messages.error(request, 'Only pending orders can be cancelled.')
+            return redirect('order_detail', order_id=order.id)
+    steps = ['pending', 'confirmed', 'packed', 'shipped', 'delivered']
+    try:
+        step_index = steps.index(order.status)
+    except ValueError:
+        step_index = -1
+    return render(request, 'orders/detail.html', {
+        'order': order, 'steps': steps, 'step_index': step_index,
+    })
 
 
 @staff_member_required

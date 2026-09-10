@@ -127,6 +127,27 @@ def wishlist_toggle(request, product_id):
 
 
 @login_required
+def wishlist_move_to_cart(request, product_id):
+    from django.contrib import messages
+    from django.shortcuts import redirect
+
+    from cart.models import Cart, CartItem
+
+    product = get_object_or_404(Product, id=product_id, is_active=True)
+    cart, _ = Cart.objects.get_or_create(customer=request.user)
+    item, created = CartItem.objects.get_or_create(
+        cart=cart, product=product,
+        defaults={'quantity': 1, 'price_at_addition': product.price},
+    )
+    if not created:
+        item.quantity += 1
+        item.save(update_fields=['quantity'])
+    WishlistItem.objects.filter(customer=request.user, product=product).delete()
+    messages.success(request, f'{product.name} moved to cart.')
+    return redirect('cart_detail')
+
+
+@login_required
 def review_add(request, product_id):
     from django.contrib import messages
     from django.shortcuts import redirect
