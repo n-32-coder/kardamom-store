@@ -39,7 +39,7 @@ spec:
             - name: DEBUG
               value: "False"
             - name: ALLOWED_HOSTS
-              value: "kardamom.local"
+              value: "* kardamom.local" # * allows OpenShift route + probe IPs (MCA demo)
             - name: SECRET_KEY
               valueFrom: {secretKeyRef: {name: kardamom-secrets, key: SECRET_KEY}}
             - name: RAZORPAY_KEY_ID
