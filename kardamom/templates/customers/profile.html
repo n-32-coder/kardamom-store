@@ -4,9 +4,13 @@
 
 {% block content %}
 <div class="section-title">My Account</div>
-<p><strong>Username:</strong> {{ customer.username }}</p>
-<p><strong>Email:</strong> {{ customer.email|default:"—" }}</p>
-<p><strong>Phone:</strong> {{ customer.phone|default:"—" }}</p>
-<p><strong>Member since:</strong> {{ customer.date_joined|date:"M d, Y" }}</p>
-<a href="{% url 'cart_detail' %}" class="btn-premium">View Cart</a>
+<p><strong>Username:</strong> {{ customer.username }} · Member since {{ customer.date_joined|date:"M d, Y" }}</p>
+<form method="post" class="checkout-section" style="max-width:560px;">
+    {% csrf_token %}
+    <h6>Update Details</h6>
+    {{ form.as_p }}
+    <button type="submit" class="btn-premium">Save Changes</button>
+    <a href="{% url 'password_change' %}" class="btn-premium-secondary">Change Password</a>
+</form>
+<p class="mt-3"><a href="{% url 'cart_detail' %}" class="btn-premium">View Cart</a></p>
 {% endblock %}

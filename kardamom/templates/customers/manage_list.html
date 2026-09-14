@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Customers - KARDAMOM{% endblock %}
+
+{% block content %}
+<div class="section-title">Registered Customers</div>
+<p class="section-sub">{{ customers|length }} account{{ customers|length|pluralize }} on the store.</p>
+{% for c in customers %}
+<div class="cart-item">
+    <div class="cart-item-details">
+        <strong>{{ c.username }}</strong>
+        {% if c.is_staff %}<span class="status-confirmed">Staff</span>{% endif %}
+        {% if not c.is_active %}<span class="status-cancelled">Deactivated</span>{% endif %}<br>
+        <span class="text-muted">{{ c.email|default:"no email" }} · {{ c.phone|default:"no phone" }}</span><br>
+        <span class="text-muted">Joined {{ c.date_joined|date:"M d, Y" }} · {{ c.orders.count }} order{{ c.orders.count|pluralize }}</span><br>
+        <a href="{% url 'order_list' %}?customer={{ c.username }}">View orders →</a>
+        <form method="post" action="{% url 'customer_manage_list' %}" style="display:inline;">
+            {% csrf_token %}
+            <input type="hidden" name="user_id" value="{{ c.id }}">
+            <button type="submit" class="cart-item-remove" style="background:none;border:none;cursor:pointer;">
+                {% if c.is_active %}Deactivate{% else %}Activate{% endif %}
+            </button>
+        </form>
+    </div>
+</div>
+{% empty %}
+<p class="text-muted">No customers yet.</p>
+{% endfor %}
+{% endblock %}
