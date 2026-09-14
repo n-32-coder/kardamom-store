@@ -13,7 +13,7 @@ from products.models import Product
 
 c = Client()
 pw = os.environ.get('KARDAMOM_ADMIN_PASSWORD', 'Kardamom#3527631a')
-assert c.login(username='admin', password=pw)
+assert c.login(username='admin@kardamom.store', password=pw)
 
 # Payment states: COD -> pending, gateway success -> paid, staff override.
 p = Product.objects.filter(is_active=True, stock__gt=2).first()
@@ -55,7 +55,7 @@ print('month filter + CSV export: OK')
 
 # Profile edit + password change (as a normal customer).
 c.logout()
-c.login(username='admin', password=pw)
+c.login(username='admin@kardamom.store', password=pw)
 r = c.post('/accounts/profile/', {
     'first_name': 'Store', 'last_name': 'Admin', 'email': 'admin@kardamom.store',
     'phone': '9999999999', 'address': 'Kochi', 'date_of_birth': '',
@@ -69,7 +69,7 @@ r = c.post('/accounts/password/', {
 })
 assert r.status_code == 302, 'password change broken'
 c.logout()
-assert c.login(username='admin', password='Newpass#9999'), 'new password login failed'
+assert c.login(username='admin@kardamom.store', password='Newpass#9999'), 'new password login failed'
 me.set_password(pw)
 me.save()
 print('password change + login: OK')

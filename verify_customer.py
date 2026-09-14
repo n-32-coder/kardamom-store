@@ -13,7 +13,7 @@ from orders.models import Order
 from products.models import Product, WishlistItem
 
 c = Client()
-assert c.login(username='demo', password='demo123'), 'demo login failed'
+assert c.login(username='demo@kardamom.store', password='demo123'), 'demo login failed'
 
 # Tracking timeline on own order (create one first).
 p = Product.objects.filter(is_active=True, stock__gt=2).first()

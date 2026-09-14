@@ -17,7 +17,7 @@ print('stripe_configured:', stripe_configured())
 assert not razorpay_configured() and not stripe_configured()
 
 c = Client()
-assert c.login(username='admin', password=os.environ.get('KARDAMOM_ADMIN_PASSWORD', 'Kardamom#3527631a'))
+assert c.login(username='admin@kardamom.store', password=os.environ.get('KARDAMOM_ADMIN_PASSWORD', 'Kardamom#3527631a'))
 p = Product.objects.filter(is_active=True, stock__gt=2).first()
 c.get(f'/cart/add/{p.id}/?quantity=1')
 

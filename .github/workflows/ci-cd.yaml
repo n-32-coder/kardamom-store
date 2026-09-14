@@ -29,6 +29,8 @@ jobs:
         run: python seed_kardamom.py
       - name: Build real catalogue
         run: python rebuild_catalogue.py
+      - name: Seed demo customer
+        run: python make_demo_user.py
       - name: Smoke tests
         run: |
           python verify_kardamom.py
@@ -49,6 +51,9 @@ jobs:
           python verify_premium_photo.py
           python verify_powder_photo.py
           python verify_seeds_photo.py
+          python verify_loginpage.py
+          python verify_registerpage.py
+          python verify_email_identity.py
 
   image:
     needs: build-test

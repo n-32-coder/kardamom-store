@@ -11,7 +11,7 @@ from django.test import Client
 from products.models import Product, ProductCategory
 
 c = Client()
-assert c.login(username='admin', password=os.environ.get('KARDAMOM_ADMIN_PASSWORD', 'Kardamom#3527631a'))
+assert c.login(username='admin@kardamom.store', password=os.environ.get('KARDAMOM_ADMIN_PASSWORD', 'Kardamom#3527631a'))
 
 r = c.get('/products/manage/')
 assert r.status_code == 200, 'manage list broken'

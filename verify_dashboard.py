@@ -12,7 +12,7 @@ from orders.models import Order
 from products.models import Product
 
 c = Client()
-assert c.login(username='admin', password=os.environ.get('KARDAMOM_ADMIN_PASSWORD', 'Kardamom#3527631a'))
+assert c.login(username='admin@kardamom.store', password=os.environ.get('KARDAMOM_ADMIN_PASSWORD', 'Kardamom#3527631a'))
 
 r = c.get('/orders/dashboard/')
 assert r.status_code == 200, 'dashboard broken'

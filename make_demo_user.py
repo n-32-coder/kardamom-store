@@ -19,7 +19,7 @@ u.save()
 print('demo user ready' if not created else 'demo user created')
 
 c = Client()
-assert c.login(username='demo', password='demo123'), 'demo login failed'
+assert c.login(username='demo@kardamom.store', password='demo123'), 'demo login failed'
 r = c.get('/')
 assert 'Cart' in r.content.decode() and 'Dashboard' not in r.content.decode()
 print('demo login works, sees shop nav: OK')

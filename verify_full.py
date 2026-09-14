@@ -11,7 +11,7 @@ from django.test import Client
 from products.models import Product
 
 c = Client()
-assert c.login(username='admin', password=os.environ.get('KARDAMOM_ADMIN_PASSWORD', 'Kardamom#3527631a')), 'login failed'
+assert c.login(username='admin@kardamom.store', password=os.environ.get('KARDAMOM_ADMIN_PASSWORD', 'Kardamom#3527631a')), 'login failed'
 
 p = Product.objects.filter(is_active=True, stock__gt=2).first()
 print(f'using product: {p.name}')

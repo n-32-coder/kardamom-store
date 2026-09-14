@@ -13,7 +13,7 @@ from products.models import Product, ProductCategory, ProductReview
 
 c = Client()
 pw = os.environ.get('KARDAMOM_ADMIN_PASSWORD', 'Kardamom#3527631a')
-assert c.login(username='admin', password=pw)
+assert c.login(username='admin@kardamom.store', password=pw)
 
 # Categories CRUD.
 r = c.post('/categories/manage/add/', {'name': 'QA Category', 'slug': '', 'description': 'temp'})

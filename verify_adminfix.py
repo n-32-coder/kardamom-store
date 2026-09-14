@@ -13,7 +13,7 @@ from products.models import Product
 
 c = Client()
 pw = os.environ.get('KARDAMOM_ADMIN_PASSWORD', 'Kardamom#3527631a')
-assert c.login(username='admin', password=pw)
+assert c.login(username='admin@kardamom.store', password=pw)
 
 # 1. Staff can open any order detail (was 404).
 order = Order.objects.exclude(customer__username='admin').first() or Order.objects.first()

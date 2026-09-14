@@ -8,7 +8,7 @@ django.setup()
 from django.test import Client
 
 c = Client()
-assert c.login(username='admin', password=os.environ.get('KARDAMOM_ADMIN_PASSWORD', 'Kardamom#3527631a'))
+assert c.login(username='admin@kardamom.store', password=os.environ.get('KARDAMOM_ADMIN_PASSWORD', 'Kardamom#3527631a'))
 
 r = c.get('/')
 html = r.content.decode()

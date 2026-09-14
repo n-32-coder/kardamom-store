@@ -95,9 +95,18 @@ for pack, price in [('100g', 380), ('250g', 890), ('500g', 1720)]:
 # Tidy legacy names into the new scheme.
 Product.objects.filter(slug='premium-green-8mm').update(
     name='Premium Green Cardamom 8mm+ 250g', grade='Super Bold (8mm+)', size_mm=8.0)
-Product.objects.filter(slug='bold-7mm').update(
-    slug='green-7mm-250g', name='Green Cardamom 7mm 250g',
-    grade='7mm Bold', size_mm=7.0)
+if Product.objects.filter(slug='green-7mm-250g').exists():
+    # Canonical 7mm 250g already built above: drop the legacy seed row
+    # instead of renaming it into a duplicate slug.
+    Product.objects.filter(slug='bold-7mm').delete()
+else:
+    Product.objects.filter(slug='bold-7mm').update(
+        slug='green-7mm-250g', name='Green Cardamom 7mm 250g',
+        grade='7mm Bold', size_mm=7.0)
+
+# Gift pack canonical name + photo (idempotent; replaces rename_gift.py).
+Product.objects.filter(category__slug='gifts').update(
+    name='Gift Pack', image='products/gift-pack.png')
 
 # Legacy premium 250g is superseded by the new scheme: hide it from the store
 # but keep it for existing orders' history. (green-7mm-250g was merged already.)
