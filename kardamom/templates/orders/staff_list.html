@@ -5,19 +5,29 @@
 {% block content %}
 <div class="section-title">All Customer Orders</div>
 <p class="section-sub">{{ orders|length }} order{{ orders|length|pluralize }} · change status from the <a href="{% url 'dashboard' %}">Dashboard</a>.</p>
+<form method="get" class="row g-2 mb-3" style="max-width:480px;">
+    <div class="col"><input type="text" name="customer" class="form-control" placeholder="Filter by customer..." value="{{ who|default:'' }}"></div>
+    <div class="col-auto"><button type="submit" class="btn-premium">Filter</button></div>
+    {% if who %}<div class="col-auto"><a href="{% url 'order_list' %}" class="btn-premium-secondary">Clear</a></div>{% endif %}
+</form>
 {% for order in orders %}
 <div class="card mb-3"><div class="card-body">
     <strong>Order #{{ order.id }}</strong>
     <span class="status-{{ order.status }}">{{ order.get_status_display }}</span><br>
     <span>{{ order.customer.username }} · {{ order.customer.email|default:"no email" }} · {{ order.phone }}</span><br>
     <span class="text-muted">{{ order.address|truncatewords:12 }}</span><br>
-    <form method="post" action="{% url 'order_list' %}" class="mt-2 d-flex gap-2" style="max-width:340px;">
+    <form method="post" action="{% url 'order_list' %}" class="mt-2 d-flex gap-2" style="max-width:520px;flex-wrap:wrap;">
         {% csrf_token %}
         <input type="hidden" name="order_id" value="{{ order.id }}">
-        <select name="status" class="form-select">
+        <select name="status" class="form-select" style="max-width:170px;">
             {% for val, label in status_choices %}
             <option value="{{ val }}" {% if order.status == val %}selected{% endif %}>{{ label }}</option>
             {% endfor %}
+        </select>
+        <select name="payment_status" class="form-select" style="max-width:150px;">
+            <option value="pending" {% if order.payment_status == 'pending' %}selected{% endif %}>Pay: Pending</option>
+            <option value="paid" {% if order.payment_status == 'paid' %}selected{% endif %}>Pay: Paid</option>
+            <option value="failed" {% if order.payment_status == 'failed' %}selected{% endif %}>Pay: Failed</option>
         </select>
         <button type="submit" class="btn-premium" style="padding:.5rem 1rem;">Set</button>
     </form>

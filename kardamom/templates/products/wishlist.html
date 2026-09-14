@@ -12,6 +12,7 @@
             <div class="product-name">{{ item.product.name }}</div>
             <div class="product-price">₹{{ item.product.price|floatformat:2 }}</div>
             <div class="product-pack-size">{{ item.product.get_pack_size_display }}</div>
+            <a href="{% url 'wishlist_move' item.product.id %}" class="btn-premium mt-2" style="padding:.45rem 1rem;">Move to Cart</a>
         </div>
     </a>
     {% empty %}

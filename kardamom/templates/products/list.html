@@ -7,7 +7,10 @@
 
 <form method="get" class="row g-2 mb-4">
     <div class="col-md-4">
-        <input type="text" name="q" class="form-control" placeholder="Search products..." value="{{ current_query|default:'' }}">
+        <div style="position:relative;">
+            <input type="text" name="q" class="form-control" placeholder="Search products..." value="{{ current_query|default:'' }}" id="productSearch" autocomplete="off">
+            <div id="searchHints" style="position:absolute;z-index:20;left:0;right:0;"></div>
+        </div>
     </div>
     <div class="col-md-3">
         <select name="category" class="form-select">
@@ -65,4 +68,43 @@
     </ul>
 </nav>
 {% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+    var box = document.getElementById('productSearch');
+    var hints = document.getElementById('searchHints');
+    if (!box) return;
+    var timer = null;
+    box.addEventListener('input', function () {
+        clearTimeout(timer);
+        var q = box.value.trim();
+        if (q.length < 2) { hints.innerHTML = ''; return; }
+        timer = setTimeout(function () {
+            fetch('/api/search/?q=' + encodeURIComponent(q))
+                .then(function (r) { return r.json(); })
+                .then(function (d) {
+                    hints.innerHTML = (d.results || []).map(function (p) {
+                        return '<a href="#" data-q="' + p.name.replace(/"/g, '') + '" class="hint-item" '
+                            + 'style="display:block;padding:.5rem .8rem;background:var(--cardamom-card-2);'
+                            + 'border:1px solid var(--cardamom-border);color:var(--cardamom-text);">'
+                            + p.name + ' · ₹' + p.price + '</a>';
+                    }).join('');
+                    hints.querySelectorAll('.hint-item').forEach(function (el) {
+                        el.addEventListener('click', function (e) {
+                            e.preventDefault();
+                            box.value = el.getAttribute('data-q');
+                            hints.innerHTML = '';
+                            box.form.submit();
+                        });
+                    });
+                });
+        }, 250);
+    });
+    document.addEventListener('click', function (e) {
+        if (!hints.contains(e.target)) hints.innerHTML = '';
+    });
+})();
+</script>
 {% endblock %}
