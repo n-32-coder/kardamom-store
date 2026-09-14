@@ -4,7 +4,7 @@
 # 2. Run:           bash deploy-openshift.sh
 set -euo pipefail
 
-PROJECT="${PROJECT:-kardamom}"
+PROJECT="${PROJECT:-nandana2-dev}"
 IMAGE="${IMAGE:-ghcr.io/n-32-coder/kardamom:latest}"
 
 echo "==> project"
